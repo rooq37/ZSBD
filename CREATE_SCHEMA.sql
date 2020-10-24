@@ -100,11 +100,11 @@ CREATE TABLE "orders"
     "status" VARCHAR2(16),
     "comment" VARCHAR2(1000),
     "method_of_payment" VARCHAR2(255),
-    "customer_id" VARCHAR2(255) NOT NULL,
+    "customer_email" VARCHAR2(255) NOT NULL,
     "delivery_address_id" NUMBER(5) NOT NULL,
     "invoice_address_id" NUMBER(5) NOT NULL,
     CONSTRAINT "orders_pk" PRIMARY KEY ("order_uuid"),
-    CONSTRAINT "fk_customer" FOREIGN KEY ("customer_id") REFERENCES "customers"("customer_id"),
+    CONSTRAINT "fk_customer" FOREIGN KEY ("customer_email") REFERENCES "customers"("email"),
     CONSTRAINT "fk_delivery_address" FOREIGN KEY ("delivery_address_id") REFERENCES "addresses"("address_id"),
     CONSTRAINT "fk_invoice_address" FOREIGN KEY ("invoice_address_id") REFERENCES "addresses"("address_id"),
     CONSTRAINT "status_enum" CHECK ("status" IN ('ORDER_PLACED', 'ORDER_CONFIRMED', 'ORDER_SHIPPED' ,'ORDER_CANCELLED'))
