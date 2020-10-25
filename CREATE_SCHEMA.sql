@@ -58,13 +58,13 @@ CREATE TABLE "books"
 CREATE TABLE "reviews"
 (
     "review_id" NUMBER(5) NOT NULL, -- dodac auto increment
-    "author" VARCHAR2(255),
-    "rating" NUMBER(2),
-    "content" VARCHAR2(1000),
-    "creation_date" DATE,
+    "author" VARCHAR2(255) NOT NULL,
+    "rating" NUMBER(2) NOT NULL,
+    "content" VARCHAR2(1000) NOT NULL,
+    "creation_date" DATE NOT NULL,
     "pros" VARCHAR2(255),
     "cons" VARCHAR2(255),
-    "recommended" NUMBER(1),
+    "recommended" NUMBER(1) NOT NULL,
     "isbn" VARCHAR2(13) NOT NULL, 
     CONSTRAINT "reviews_pk" PRIMARY KEY ("review_id"),
     CONSTRAINT "fk_book" FOREIGN KEY ("isbn") REFERENCES "books"("isbn")
