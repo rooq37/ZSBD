@@ -1,0 +1,26 @@
+REM INSERTING into ZSBDUSER."categories"
+SET DEFINE OFF;
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('1','Fantasy','Fan','praesent blandit lacinia erat vestibulum sed magna at nunc commodo placerat praesent blandit nam nulla integer');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('2','Adventure','Adv','lobortis est phasellus sit amet erat nulla tempus vivamus in felis eu sapien cursus vestibulum proin');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('3','Romance','Rom','duis bibendum felis sed interdum venenatis turpis enim blandit mi in porttitor');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('4','Contemporary','Con','aliquam augue quam sollicitudin vitae consectetuer eget rutrum at lorem integer tincidunt ante vel ipsum praesent blandit lacinia erat');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('5','Dystopian','Dys','velit donec diam neque vestibulum eget vulputate ut ultrices vel augue vestibulum ante ipsum');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('6','Mystery','Mys','blandit lacinia erat vestibulum sed magna at nunc commodo placerat praesent blandit nam nulla integer pede justo lacinia eget');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('7','Horror','Hor',null);
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('8','Thriller','Thr','nam nulla integer pede justo lacinia eget tincidunt eget tempus vel pede morbi porttitor lorem');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('9','Paranormal','Par','consequat metus sapien ut nunc vestibulum ante ipsum primis in');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('10','Historical fiction','HisFic','congue vivamus metus arcu adipiscing molestie hendrerit at vulputate vitae nisl aenean');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('11','Science Fiction','SciFic','interdum mauris non ligula pellentesque ultrices phasellus id sapien in sapien iaculis congue vivamus metus arcu');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('12','Memoir','Mem','cras in purus eu magna vulputate luctus cum sociis natoque penatibus et magnis dis parturient montes nascetur ridiculus');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('13','Cooking','Cook','luctus cum sociis natoque penatibus et magnis dis parturient montes nascetur ridiculus mus vivamus');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('14','Art','Art','posuere cubilia curae mauris viverra diam vitae quam suspendisse potenti nullam porttitor lacus at turpis donec posuere');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('15','Self-help / Personal','SelfHelp','vulputate luctus cum sociis natoque penatibus et magnis dis parturient');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('16','Development','Dev','lectus pellentesque eget nunc donec quis orci eget orci vehicula condimentum curabitur in libero ut massa volutpat convallis morbi odio');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('17','Motivational','Mot','morbi quis tortor id nulla ultrices aliquet maecenas leo odio condimentum id');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('18','Health','Hea','id luctus nec molestie sed justo pellentesque viverra pede ac diam');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('19','History','His','porttitor pede justo eu massa donec dapibus duis at velit eu est congue elementum in');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('20','Travel','Tra','risus praesent lectus vestibulum quam sapien varius ut blandit non interdum');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('21','Guide / How-to','HowTo','leo odio porttitor id consequat in consequat ut nulla sed accumsan');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('22','Families & Relationships','FamRel','leo rhoncus sed vestibulum sit amet cursus id turpis integer aliquet massa id lobortis convallis');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('23','Humor','Hum','sem sed sagittis nam congue risus semper porta volutpat quam pede lobortis ligula sit amet');
+Insert into ZSBDUSER."categories" ("category_id","name","short_name","description") values ('24','Children’s','Child','sit amet consectetuer adipiscing elit proin interdum mauris non ligula pellentesque ultrices phasellus id sapien in sapien iaculis congue');
