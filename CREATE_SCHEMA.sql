@@ -57,7 +57,7 @@ CREATE TABLE "books"
 
 CREATE TABLE "reviews"
 (
-    "review_id" NUMBER(5) NOT NULL, -- dodac auto increment
+    "review_id" NUMBER(5) NOT NULL, 
     "author" VARCHAR2(255) NOT NULL,
     "rating" NUMBER(2) NOT NULL,
     "content" VARCHAR2(1000) NOT NULL,
@@ -88,7 +88,6 @@ CREATE TABLE "addresses"
     "street" VARCHAR2(255) NOT NULL,
     "postcode" VARCHAR2(6) NOT NULL,
     "city" VARCHAR2(255) NOT NULL,
-    -- "country" VARCHAR2(255) NOT NULL, pominąć przy ładowaniu
     "house_number" VARCHAR2(10) NOT NULL,
     "apartment_number" VARCHAR2(10),
     CONSTRAINT "addresses_pk" PRIMARY KEY ("address_id")
@@ -96,7 +95,7 @@ CREATE TABLE "addresses"
 
 CREATE TABLE "orders"
 (
-    "order_id" VARCHAR2(36) NOT NULL,  -- order_uuid zmienione na order_id
+    "order_id" NUMBER(5) NOT NULL,  
     "creation_date" DATE,
     "modification_date" DATE,
     "total_price" NUMBER(5, 2),
@@ -111,13 +110,14 @@ CREATE TABLE "orders"
     CONSTRAINT "fk_customer" FOREIGN KEY ("customer_email") REFERENCES "customers"("email"),
     CONSTRAINT "fk_delivery_address" FOREIGN KEY ("delivery_address_id") REFERENCES "addresses"("address_id"),
     CONSTRAINT "fk_invoice_address" FOREIGN KEY ("invoice_address_id") REFERENCES "addresses"("address_id"),
+    CONSTRAINT "dates_check" CHECK ("modification_date" >= "creation_date"),
     CONSTRAINT "status_enum" CHECK ("status" IN ('ORDER_PLACED', 'ORDER_CONFIRMED', 'ORDER_SHIPPED' ,'ORDER_CANCELLED'))
 );
 
 CREATE TABLE "order_items"
 (
     "isbn" VARCHAR(13) NOT NULL,
-    "order_id" VARCHAR(36) NOT NULL,
+    "order_id" NUMBER(5) NOT NULL,
     "quantity" NUMBER(5) NOT NULL,
     CONSTRAINT "order_items_pk" PRIMARY KEY ("isbn", "order_id"),
     CONSTRAINT "fk_isbn" FOREIGN KEY ("isbn") REFERENCES "books"("isbn"),
