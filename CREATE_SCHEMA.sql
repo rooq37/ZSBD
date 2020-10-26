@@ -123,3 +123,7 @@ CREATE TABLE "order_items"
     CONSTRAINT "fk_isbn" FOREIGN KEY ("isbn") REFERENCES "books"("isbn"),
     CONSTRAINT "fk_order" FOREIGN KEY ("order_id") REFERENCES "orders"("order_id")
 );
+
+UPDATE "books" t1 SET "quantity_sold" = (SELECT SUM("quantity") FROM "order_items" t2  WHERE t1."isbn" = t2."isbn" GROUP BY "isbn");
+
+UPDATE "orders" t1 SET "total_price" = (SELECT SUM("price") FROM (SELECT "order_id", "price" * "quantity" AS "price" FROM "books" B JOIN "order_items" OI ON B."isbn"=OI."isbn") t2  WHERE t1."order_id" = t2."order_id" GROUP BY "order_id");
