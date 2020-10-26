@@ -98,7 +98,7 @@ CREATE TABLE "orders"
     "order_id" NUMBER(5) NOT NULL,  
     "creation_date" DATE NOT NULL,
     "modification_date" DATE NOT NULL,
-    "total_price" NUMBER(5, 2) NOT NULL,
+    "total_price" NUMBER(7, 2) NOT NULL,
     "carrier" VARCHAR2(255) NOT NULL,
     "status" VARCHAR2(16) NOT NULL,
     "comment" VARCHAR2(1000),
