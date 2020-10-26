@@ -96,7 +96,7 @@ CREATE TABLE "addresses"
 
 CREATE TABLE "orders"
 (
-    "order_uuid" VARCHAR2(36) NOT NULL,
+    "order_id" VARCHAR2(36) NOT NULL,  -- order_uuid zmienione na order_id
     "creation_date" DATE,
     "modification_date" DATE,
     "total_price" NUMBER(5, 2),
@@ -107,7 +107,7 @@ CREATE TABLE "orders"
     "customer_email" VARCHAR2(255) NOT NULL,
     "delivery_address_id" NUMBER(5) NOT NULL,
     "invoice_address_id" NUMBER(5) NOT NULL,
-    CONSTRAINT "orders_pk" PRIMARY KEY ("order_uuid"),
+    CONSTRAINT "orders_pk" PRIMARY KEY ("order_id"),
     CONSTRAINT "fk_customer" FOREIGN KEY ("customer_email") REFERENCES "customers"("email"),
     CONSTRAINT "fk_delivery_address" FOREIGN KEY ("delivery_address_id") REFERENCES "addresses"("address_id"),
     CONSTRAINT "fk_invoice_address" FOREIGN KEY ("invoice_address_id") REFERENCES "addresses"("address_id"),
@@ -117,9 +117,9 @@ CREATE TABLE "orders"
 CREATE TABLE "order_items"
 (
     "isbn" VARCHAR(13) NOT NULL,
-    "order_uuid" VARCHAR(36) NOT NULL,
-    "quantity" NUMBER(5),
-    CONSTRAINT "order_items_pk" PRIMARY KEY ("isbn", "order_uuid"),
+    "order_id" VARCHAR(36) NOT NULL,
+    "quantity" NUMBER(5) NOT NULL,
+    CONSTRAINT "order_items_pk" PRIMARY KEY ("isbn", "order_id"),
     CONSTRAINT "fk_isbn" FOREIGN KEY ("isbn") REFERENCES "books"("isbn"),
-    CONSTRAINT "fk_order" FOREIGN KEY ("order_uuid") REFERENCES "orders"("order_uuid")
+    CONSTRAINT "fk_order" FOREIGN KEY ("order_id") REFERENCES "orders"("order_id")
 );
