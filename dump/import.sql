@@ -1,0 +1,9 @@
+@./addresses_DATA_TABLE.sql
+@./authors_DATA_TABLE.sql
+@./categories_DATA_TABLE.sql
+@./publishers_DATA_TABLE.sql
+@./books_DATA_TABLE.sql
+@./customers_DATA_TABLE.sql
+@./orders_DATA_TABLE.sql
+@./reviews_DATA_TABLE.sql
+@./order_items_DATA_TABLE.sql
