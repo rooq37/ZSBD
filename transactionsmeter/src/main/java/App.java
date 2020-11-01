@@ -10,7 +10,8 @@ import java.util.List;
 
 public class App {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
+        Utils.establishConnection();
         int count = 10;
         for (Path transactionsPath : Utils.getTransactionsPaths()) {
             try {
@@ -21,32 +22,29 @@ public class App {
             }
         }
 
-        try {
-            Utils.closeConnections();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        Utils.closeConnections();
     }
 
     public static void executeTransactionAndPrintResults(String name, String query, int count) throws SQLException {
         List<Long> times = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             times.add(executeUserQuery(query));
+            System.out.println("*");
         }
-        System.out.println("Times: " + times);
         double average = times.stream().mapToLong(val -> val).average().orElse(0);
         double min = times.stream().mapToLong(val -> val).min().orElse(0);
         double max = times.stream().mapToLong(val -> val).max().orElse(0);
 
-        System.out.println(String.format("*********** TRANSACTION || %s **********", name));
+        System.out.printf("*********** TRANSACTION || %s **********%n", name);
         System.out.println("Count: " + count);
         System.out.println("Average: " + average + "ms");
         System.out.println("Min: " + min + "ms");
         System.out.println("Max: " + max + "ms");
+        System.out.println("Times: " + times);
     }
 
     public static long executeUserQuery(String query) throws SQLException {
-        // clearCaches();  //TODO uncomment 
+        clearCaches();  //TODO uncomment
 
         Instant start = Instant.now();
 
