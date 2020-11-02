@@ -13,11 +13,6 @@
             <artifactId>ojdbc10</artifactId>
             <version>19.3.0.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>sqltool</artifactId>
-            <version>2.4.1</version>
-        </dependency>
     </dependencies>
 
     <build>

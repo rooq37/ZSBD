@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.sql.Statement;
 import java.time.Duration;
 import java.time.Instant;
@@ -29,7 +30,7 @@ public class App {
         List<Long> times = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             times.add(executeUserQuery(query));
-            System.out.println("*");
+            System.out.print("*");
         }
         double average = times.stream().mapToLong(val -> val).average().orElse(0);
         double min = times.stream().mapToLong(val -> val).min().orElse(0);
@@ -44,15 +45,19 @@ public class App {
     }
 
     public static long executeUserQuery(String query) throws SQLException {
-        clearCaches();  //TODO uncomment
+        Utils.checkDatabase();
+        clearCaches();
+        Savepoint my_savepoint = Utils.getUserConnection().setSavepoint();
+        Statement statement = Utils.getUserConnection().createStatement();
 
         Instant start = Instant.now();
-
-        Statement statement = Utils.getUserConnection().createStatement();
         statement.executeQuery(query);
-
         Instant finish = Instant.now();
-        return Duration.between(start, finish).toMillis();
+        long duration = Duration.between(start, finish).toMillis();
+
+        statement.close();
+        Utils.getUserConnection().rollback(my_savepoint);
+        return duration;
     }
 
     public static void clearCaches() throws SQLException {

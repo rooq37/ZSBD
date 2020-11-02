@@ -1,0 +1,1 @@
+UPDATE "orders" t1 SET "total_price" = "total_price" * 0.8 WHERE t1."status" = 'ORDER_PLACED' AND (SELECT COUNT(*) FROM "order_items" s1 WHERE s1."order_id" = t1."order_id")> 3

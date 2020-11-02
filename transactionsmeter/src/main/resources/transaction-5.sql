@@ -1,0 +1,1 @@
+UPDATE "books" t1 SET "price" = "price" + (SELECT COUNT(*)/10 FROM "books" s1 WHERE t1."author_id" = s1."author_id")
