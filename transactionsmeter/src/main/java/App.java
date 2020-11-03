@@ -12,7 +12,7 @@ import java.util.List;
 
 public class App {
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, InterruptedException {
         Utils.establishConnection();
         int count = 10;
         for (Path transactionsPath : Utils.getTransactionsPaths()) {
@@ -27,10 +27,11 @@ public class App {
         Utils.closeConnections();
     }
 
-    public static void executeTransactionAndPrintResults(String name, String query, int count) throws SQLException {
+    public static void executeTransactionAndPrintResults(String name, String query, int count) throws SQLException, InterruptedException {
         List<Long> times = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             times.add(executeUserQuery(query));
+            Thread.sleep(5000);
             System.out.print("*");
         }
         double average = times.stream().mapToLong(val -> val).average().orElse(0);
