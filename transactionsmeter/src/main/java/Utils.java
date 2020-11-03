@@ -12,12 +12,12 @@ public class Utils {
 
     private static final List<Path> transactionsPaths =
             Arrays.asList(
-//                    Paths.get("transaction-1.sql"),
-//                    Paths.get("transaction-2.sql"),
-//                    Paths.get("transaction-3.sql"),
-//                    Paths.get("transaction-4.sql"),
-//                    Paths.get("transaction-5.sql"),
-//                    Paths.get("transaction-6.sql"),
+                    Paths.get("transaction-1.sql"),
+                    Paths.get("transaction-2.sql"),
+                    Paths.get("transaction-3.sql"),
+                    Paths.get("transaction-4.sql"),
+                    Paths.get("transaction-5.sql"),
+                    Paths.get("transaction-6.sql"),
                     Paths.get("transaction-7.sql")
             );
 
