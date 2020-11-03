@@ -1,7 +1,6 @@
-UPDATE "books"
+UPDATE "books" b1
 SET "price" = "price" + 1
-WHERE "isbn" IN (SELECT i from
-  (
-     SELECT AVG("rating"), b."isbn" i from "reviews" r
-     INNER JOIN "books" b ON b."isbn" = r."isbn" having AVG("rating") > 7 group by b."isbn")
-  )
+WHERE (SELECT i from
+    (SELECT AVG("rating"), b2."isbn" i from "reviews" r
+     INNER JOIN "books" b2 ON b2."isbn" = r."isbn" where  b2."isbn" = b1."isbn" having AVG("rating") > 9 group by b2."isbn")
+    ) =  b1."isbn"
