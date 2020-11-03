@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.sql.Statement;
@@ -48,10 +49,10 @@ public class App {
         Utils.checkDatabase();
         clearCaches();
         Savepoint my_savepoint = Utils.getUserConnection().setSavepoint();
-        Statement statement = Utils.getUserConnection().createStatement();
+        CallableStatement statement = Utils.getUserConnection().prepareCall(query);
 
         Instant start = Instant.now();
-        statement.executeQuery(query);
+        statement.execute();
         Instant finish = Instant.now();
         long duration = Duration.between(start, finish).toMillis();
 

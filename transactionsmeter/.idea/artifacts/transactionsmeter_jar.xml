@@ -1,0 +1,15 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="transactionsmeter:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/transactionsmeter_jar</output-path>
+    <root id="archive" name="transactionsmeter.jar">
+      <element id="module-output" name="transactionsmeter" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/oracle/ojdbc/osdt_cert/19.3.0.0/osdt_cert-19.3.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/oracle/ojdbc/osdt_core/19.3.0.0/osdt_core-19.3.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/oracle/ojdbc/oraclepki/19.3.0.0/oraclepki-19.3.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/oracle/ojdbc/ons/19.3.0.0/ons-19.3.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/oracle/ojdbc/simplefan/19.3.0.0/simplefan-19.3.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/oracle/ojdbc/ucp/19.3.0.0/ucp-19.3.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/oracle/ojdbc/ojdbc10/19.3.0.0/ojdbc10-19.3.0.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
