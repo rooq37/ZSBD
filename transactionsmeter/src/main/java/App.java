@@ -1,3 +1,4 @@
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,10 +12,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class App {
+    public static final Mode APP_MODE = Mode.PLANER;
 
-    public static void main(String[] args) throws SQLException, InterruptedException {
+    public static void main(String[] args) throws SQLException, InterruptedException, IOException {
+        int count;
+
         Utils.establishConnection();
-        int count = 10;
+        if(APP_MODE.equals(Mode.PLANER)){
+           count = 1;
+            FileWriter fileWriter = new FileWriter("plans.txt");
+            fileWriter.close(); //clear file
+        }else{
+            count = 10;
+        }
+
         for (Path transactionsPath : Utils.getTransactionsPaths()) {
             try {
                 String query = Files.readString(transactionsPath);
@@ -27,12 +38,17 @@ public class App {
         Utils.closeConnections();
     }
 
-    public static void executeTransactionAndPrintResults(String name, String query, int count) throws SQLException, InterruptedException {
+    public static void executeTransactionAndPrintResults(String name, String query, int count) throws SQLException, InterruptedException, IOException {
         List<Long> times = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            times.add(executeUserQuery(query));
-            Thread.sleep(5000);
-            System.out.print("*");
+            if(APP_MODE.equals(Mode.PLANER)) {
+                String planQuery = "explain plan set statement_id= '" + name + "' for " + query;
+                times.add(executeUserQuery(name, planQuery));
+            }else{
+                times.add(executeUserQuery(name, query));
+                Thread.sleep(5000);
+                System.out.print("*");
+            }
         }
         double average = times.stream().mapToLong(val -> val).average().orElse(0);
         double min = times.stream().mapToLong(val -> val).min().orElse(0);
@@ -46,7 +62,7 @@ public class App {
         System.out.println("Times: " + times);
     }
 
-    public static long executeUserQuery(String query) throws SQLException {
+    public static long executeUserQuery(String name,String query) throws SQLException, IOException {
         Utils.checkDatabase();
         clearCaches();
         Savepoint my_savepoint = Utils.getUserConnection().setSavepoint();
@@ -58,6 +74,9 @@ public class App {
         long duration = Duration.between(start, finish).toMillis();
 
         statement.close();
+        if(APP_MODE.equals(Mode.PLANER)) {
+            Utils.getStatistic(name);
+        }
         Utils.getUserConnection().rollback(my_savepoint);
         return duration;
     }
