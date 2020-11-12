@@ -12,17 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class App {
-    public static final Mode APP_MODE = Mode.PLANER;
+    private static final Mode APP_MODE = Utils.getProps().getMode();
 
     public static void main(String[] args) throws SQLException, InterruptedException, IOException {
         int count;
 
         Utils.establishConnection();
-        if(APP_MODE.equals(Mode.PLANER)){
-           count = 1;
-            FileWriter fileWriter = new FileWriter("plans.txt");
+        if (APP_MODE.equals(Mode.PLANER)) {
+            count = 1;
+            FileWriter fileWriter = new FileWriter(Utils.getProps().getPlansFilename());
             fileWriter.close(); //clear file
-        }else{
+        } else {
             count = 10;
         }
 
@@ -41,12 +41,12 @@ public class App {
     public static void executeTransactionAndPrintResults(String name, String query, int count) throws SQLException, InterruptedException, IOException {
         List<Long> times = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            if(APP_MODE.equals(Mode.PLANER)) {
+            if (APP_MODE.equals(Mode.PLANER)) {
                 String planQuery = "explain plan set statement_id= '" + name + "' for " + query;
                 times.add(executeUserQuery(name, planQuery));
-            }else{
+            } else {
                 times.add(executeUserQuery(name, query));
-                Thread.sleep(5000);
+                Thread.sleep(500);
                 System.out.print("*");
             }
         }
@@ -62,10 +62,13 @@ public class App {
         System.out.println("Times: " + times);
     }
 
-    public static long executeUserQuery(String name,String query) throws SQLException, IOException {
+    public static long executeUserQuery(String name, String query) throws SQLException, IOException {
         Utils.checkDatabase();
         clearCaches();
-        //Savepoint my_savepoint = Utils.getUserConnection().setSavepoint();
+        Savepoint my_savepoint = null;
+        if (APP_MODE.equals(Mode.TRANSACTION_METER)) {
+            my_savepoint = Utils.getUserConnection().setSavepoint();
+        }
         CallableStatement statement = Utils.getUserConnection().prepareCall(query);
 
         Instant start = Instant.now();
@@ -74,10 +77,12 @@ public class App {
         long duration = Duration.between(start, finish).toMillis();
 
         statement.close();
-        if(APP_MODE.equals(Mode.PLANER)) {
+        if (APP_MODE.equals(Mode.PLANER)) {
             Utils.getStatistic(name);
         }
-        //Utils.getUserConnection().rollback(my_savepoint);
+        if (my_savepoint != null) {
+            Utils.getUserConnection().rollback(my_savepoint);
+        }
         return duration;
     }
 
