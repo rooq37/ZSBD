@@ -1,16 +1,12 @@
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Savepoint;
-import java.sql.Statement;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class App {
@@ -18,33 +14,22 @@ public class App {
     private static final Mode APP_MODE = props.getMode();
 
     public static void main(String[] args) throws SQLException, InterruptedException, IOException {
-        int count;
-
         Utils.establishConnection();
-        if (APP_MODE.equals(Mode.PLANER)) {
-            count = 1;
-            FileWriter fileWriter = new FileWriter(props.getPlansFilename());
-            fileWriter.close(); //clear file
-        } else {
-            count = 10;
-        }
+        if (APP_MODE.equals(Mode.PLANER)) Utils.clearPlanFile();
 
-        for (boolean hasIndex :
-                (props.isIndexEnabled() && APP_MODE.equals(Mode.TRANSACTION_METER)
-                        ? (props.isClearRunEnabled() ? Arrays.asList(false, true) : Collections.singletonList(true))
-                        : Collections.singletonList(false))) {
+        for (boolean hasIndex : Utils.getBooleansForIndex()) {
             if (hasIndex) {
                 System.out.println();
                 Utils.setAllIndexes();
                 System.out.println("############*********** INDEXES ADDED!!! **********###############");
             } else {
                 System.out.println();
-                System.out.println("###############*********** CLEAR RUN **********###################");
+                System.out.printf("###############*********** Clean RUN || %s mode **********###################%n", APP_MODE);
             }
             for (Path transactionsPath : Utils.getTransactionsPaths()) {
                 try {
                     String query = Files.readString(transactionsPath);
-                    executeTransactionAndPrintResults(transactionsPath.toString(), query, count);
+                    executeTransactionAndPrintResults(transactionsPath.toString(), query, props.getNumberOfIteration());
                 } catch (SQLException | IOException e) {
                     e.printStackTrace();
                 }
@@ -62,11 +47,10 @@ public class App {
         List<Long> times = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             if (APP_MODE.equals(Mode.PLANER)) {
-                String planQuery = "explain plan set statement_id= '" + name + "' for " + query;
-                times.add(executeUserQuery(name, planQuery));
+                times.add(executeUserQuery(name, String.format("explain plan set statement_id= '%s' for %s", name, query)));
             } else {
                 times.add(executeUserQuery(name, query));
-                Thread.sleep(500);
+                Thread.sleep(props.getSleepBetweenIterations());
                 System.out.print("*");
             }
         }
@@ -84,11 +68,13 @@ public class App {
 
     public static long executeUserQuery(String name, String query) throws SQLException, IOException {
         Utils.checkDatabase();
-        clearCaches();
+        Utils.clearCaches();
+
         Savepoint my_savepoint = null;
         if (APP_MODE.equals(Mode.TRANSACTION_METER)) {
             my_savepoint = Utils.getUserConnection().setSavepoint();
         }
+
         CallableStatement statement = Utils.getUserConnection().prepareCall(query);
 
         Instant start = Instant.now();
@@ -97,8 +83,9 @@ public class App {
         long duration = Duration.between(start, finish).toMillis();
 
         statement.close();
+
         if (APP_MODE.equals(Mode.PLANER)) {
-            Utils.getStatistic(name);
+            Utils.savePlanToFile(name);
         }
         if (my_savepoint != null) {
             Utils.getUserConnection().rollback(my_savepoint);
@@ -106,9 +93,5 @@ public class App {
         return duration;
     }
 
-    public static void clearCaches() throws SQLException {
-        Statement statement = Utils.getSystemConnection().createStatement();
-        statement.executeQuery("alter system flush buffer_cache");
-        statement.executeQuery("alter system flush shared_pool");
-    }
+
 }

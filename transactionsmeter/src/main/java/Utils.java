@@ -4,6 +4,8 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,7 +29,12 @@ public class Utils {
 
     }
 
-    public static void getStatistic(String name) throws SQLException, IOException {
+    public static void clearPlanFile() throws IOException {
+        FileWriter fileWriter = new FileWriter(props.getPlansFilename());
+        fileWriter.close();
+    }
+
+    public static void savePlanToFile(String name) throws SQLException, IOException {
         FileWriter fileWriter = new FileWriter(props.getPlansFilename(), true);
         PrintWriter printWriter = new PrintWriter(fileWriter);
         printWriter.println("");
@@ -140,5 +147,19 @@ public class Utils {
 
     public static AppProperties getProps() {
         return props;
+    }
+
+    public static List<Boolean> getBooleansForIndex() {
+        return (
+                props.isIndexEnabled() && props.getMode().equals(Mode.TRANSACTION_METER)
+                        ? (props.isClearRunEnabled() ? Arrays.asList(false, true) : Collections.singletonList(true))
+                        : Collections.singletonList(false)
+        );
+    }
+
+    public static void clearCaches() throws SQLException {
+        Statement statement = Utils.getSystemConnection().createStatement();
+        statement.executeQuery("alter system flush buffer_cache");
+        statement.executeQuery("alter system flush shared_pool");
     }
 }

@@ -3,55 +3,69 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class AppProperties {
-    private Properties properties = new Properties();
+    private Properties config = new Properties();
+    private Properties users = new Properties();
 
     public AppProperties() {
         try {
-            properties.load(new FileReader("config.properties"));
+            config.load(new FileReader("properties/config.properties"));
+            users.load(new FileReader("properties/users.properties"));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public String getUserUsername() {
-        return properties.getProperty("user-username");
+        return users.getProperty("user-username");
     }
 
     public String getUserPassword() {
-        return properties.getProperty("user-password");
+        return users.getProperty("user-password");
     }
 
     public String getSystemUsername() {
-        return properties.getProperty("system-username");
+        return users.getProperty("system-username");
     }
 
     public String getSystemPassword() {
-        return properties.getProperty("system-password");
+        return users.getProperty("system-password");
     }
 
     public String getPlansFilename() {
-        return properties.getProperty("plans-filename");
+        return config.getProperty("plans-filename");
     }
 
     public String getIndexFilename() {
-        return properties.getProperty("index-filename");
+        return config.getProperty("index-filename");
+    }
+
+    public int getNumberOfIteration() {
+        Mode mode = getMode();
+        if (mode == Mode.TRANSACTION_METER) {
+            return Integer.parseInt(config.getProperty("iteration-meter"));
+        }
+        return Integer.parseInt(config.getProperty("iteration-planer"));
     }
 
     public Mode getMode() {
-        switch (properties.getProperty("mode")) {
+        switch (config.getProperty("mode")) {
             case "PLANER":
                 return Mode.PLANER;
             case "METER":
                 return Mode.TRANSACTION_METER;
         }
-        throw new IllegalArgumentException("Bad mode");
+        throw new IllegalArgumentException("Error while reading MODE from config");
     }
 
     public boolean isIndexEnabled() {
-        return Boolean.parseBoolean(properties.getProperty("index"));
+        return Boolean.parseBoolean(config.getProperty("index"));
     }
 
     public boolean isClearRunEnabled() {
-        return Boolean.parseBoolean(properties.getProperty("index-clear-run"));
+        return Boolean.parseBoolean(config.getProperty("index-clear-run"));
+    }
+
+    public int getSleepBetweenIterations() {
+        return Integer.parseInt(config.getProperty("sleep-between-iterations"));
     }
 }
