@@ -9,20 +9,25 @@ import java.util.List;
 
 public class Utils {
     private static final String urlUser = "jdbc:oracle:thin:zsbduser/pw_zsbduser@localhost:1521/XEPDB1";
-    private static final String urlAdmin = "jdbc:oracle:thin:system/" + "\"WBy3kXh23l8=1\"" + "@localhost:1521/XEPDB1";
+    private static final String urlAdmin = "jdbc:oracle:thin:system/" + "\"2sPItlNGCW4=1\"" + "@localhost:1521/XEPDB1";
     // TODO ustawic haslo w 'haslo_do_system'
 
 
     private static final List<Path> transactionsPaths =
             Arrays.asList(
-                    Paths.get("transaction-1.sql"),
-                    Paths.get("transaction-2.sql")
-                  /*  Paths.get("transaction-3.sql"),
-                    Paths.get("transaction-4.sql"),
-                    Paths.get("transaction-5.sql"),
-                    Paths.get("transaction-6.sql"),
-                    Paths.get("transaction-7.sql"),
-                    Paths.get("transaction-8.sql")*/
+//                    Paths.get("transaction-1.sql"),
+//                    Paths.get("transaction-2.sql"),
+//                    Paths.get("transaction-3.sql"),
+//                    Paths.get("transaction-4.sql"),
+//                    Paths.get("transaction-5.sql"),
+//                    Paths.get("transaction-6.sql"),
+//                    Paths.get("transaction-6a.sql"),
+//                    Paths.get("transaction-6b.sql"),
+//                    Paths.get("transaction-7.sql"),
+//                    Paths.get("transaction-8.sql"),
+                    Paths.get("transaction-8a.sql"),
+                    Paths.get("transaction-8b.sql"),
+                    Paths.get("transaction-8c.sql")
             );
 
     private static Connection userConnection;

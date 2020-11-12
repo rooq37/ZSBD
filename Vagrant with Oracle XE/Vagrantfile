@@ -38,7 +38,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   VM_NAME = default_s('VM_NAME', 'oracle18c-xe-vagrant')
 
   # Memory for the VM (in MB, 2048 MB = 2 GB)
-  VM_MEMORY = default_i('VM_MEMORY', 1200)
+  VM_MEMORY = default_i('VM_MEMORY', 2048)
 
   # VM time zone
   # If not specified, will be set to match host time zone (if possible)

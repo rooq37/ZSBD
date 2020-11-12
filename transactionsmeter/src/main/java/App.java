@@ -65,7 +65,7 @@ public class App {
     public static long executeUserQuery(String name,String query) throws SQLException, IOException {
         Utils.checkDatabase();
         clearCaches();
-        Savepoint my_savepoint = Utils.getUserConnection().setSavepoint();
+        //Savepoint my_savepoint = Utils.getUserConnection().setSavepoint();
         CallableStatement statement = Utils.getUserConnection().prepareCall(query);
 
         Instant start = Instant.now();
@@ -77,7 +77,7 @@ public class App {
         if(APP_MODE.equals(Mode.PLANER)) {
             Utils.getStatistic(name);
         }
-        Utils.getUserConnection().rollback(my_savepoint);
+        //Utils.getUserConnection().rollback(my_savepoint);
         return duration;
     }
 
