@@ -1,8 +1,10 @@
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
+import java.util.HashMap;
 import java.util.List;
 
 public class Utils {
@@ -42,6 +44,44 @@ public class Utils {
         }
 
         printWriter.close();
+    }
+
+    private static HashMap<String, String> getIndexes() {
+        HashMap<String, String> indexes = new HashMap<>();
+        try {
+            String content = Files.readString(Path.of(props.getIndexFilename())).replace("\n", " ");
+            for (String indexQuery : content.split(";")) {
+                String indexName = indexQuery.toLowerCase().split("index")[1].trim().split(" ")[0];
+                if (indexName.isBlank()) throw new IllegalStateException("Index name is empty!");
+                indexes.put(indexName, indexQuery);
+            }
+            return indexes;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        throw new IllegalStateException("Cannot import index file");
+    }
+
+    public static void setAllIndexes() throws SQLException {
+        HashMap<String, String> indexes = getIndexes();
+        Connection userConnection = getUserConnection();
+        for (String query : indexes.values()) {
+            Statement statement = userConnection.createStatement();
+            statement.executeQuery(query);
+            statement.close();
+        }
+        userConnection.commit();
+    }
+
+    public static void removeAllIndexes() throws SQLException {
+        HashMap<String, String> indexes = getIndexes();
+        Connection userConnection = getUserConnection();
+        for (String indexName : indexes.keySet()) {
+            Statement statement = userConnection.createStatement();
+            statement.executeQuery(String.format("DROP INDEX %s", indexName));
+            statement.close();
+        }
+        userConnection.commit();
     }
 
     public static void checkDatabase() throws SQLException {

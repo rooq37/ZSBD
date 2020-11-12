@@ -31,7 +31,10 @@ public class SqlCollections {
                     Paths.get("transaction-8b.sql"),
                     Paths.get("transaction-8c.sql")
             );
-    private static List<Path> CUSTOM_PLAN = Arrays.asList(Paths.get("transaction-1.sql"));
+    private static List<Path> CUSTOM_PLAN = Arrays.asList(
+            Paths.get("transaction-1.sql"),
+            Paths.get("transaction-3.sql")
+    );
 
     static {
         ACTUAL = CUSTOM_PLAN;

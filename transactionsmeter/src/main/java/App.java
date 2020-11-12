@@ -9,10 +9,13 @@ import java.sql.Statement;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class App {
-    private static final Mode APP_MODE = Utils.getProps().getMode();
+    private static final AppProperties props = Utils.getProps();
+    private static final Mode APP_MODE = props.getMode();
 
     public static void main(String[] args) throws SQLException, InterruptedException, IOException {
         int count;
@@ -20,18 +23,35 @@ public class App {
         Utils.establishConnection();
         if (APP_MODE.equals(Mode.PLANER)) {
             count = 1;
-            FileWriter fileWriter = new FileWriter(Utils.getProps().getPlansFilename());
+            FileWriter fileWriter = new FileWriter(props.getPlansFilename());
             fileWriter.close(); //clear file
         } else {
             count = 10;
         }
 
-        for (Path transactionsPath : Utils.getTransactionsPaths()) {
-            try {
-                String query = Files.readString(transactionsPath);
-                executeTransactionAndPrintResults(transactionsPath.toString(), query, count);
-            } catch (SQLException | IOException e) {
-                e.printStackTrace();
+        for (boolean hasIndex :
+                (props.isIndexEnabled() && APP_MODE.equals(Mode.TRANSACTION_METER)
+                        ? (props.isClearRunEnabled() ? Arrays.asList(false, true) : Collections.singletonList(true))
+                        : Collections.singletonList(false))) {
+            if (hasIndex) {
+                System.out.println();
+                Utils.setAllIndexes();
+                System.out.println("############*********** INDEXES ADDED!!! **********###############");
+            } else {
+                System.out.println();
+                System.out.println("###############*********** CLEAR RUN **********###################");
+            }
+            for (Path transactionsPath : Utils.getTransactionsPaths()) {
+                try {
+                    String query = Files.readString(transactionsPath);
+                    executeTransactionAndPrintResults(transactionsPath.toString(), query, count);
+                } catch (SQLException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (hasIndex) {
+                Utils.removeAllIndexes();
+                System.out.println("############*********** INDEXES REMOVED!!! **********###############");
             }
         }
 

@@ -33,13 +33,25 @@ public class AppProperties {
         return properties.getProperty("plans-filename");
     }
 
-    public Mode getMode(){
-        switch (properties.getProperty("mode")){
+    public String getIndexFilename() {
+        return properties.getProperty("index-filename");
+    }
+
+    public Mode getMode() {
+        switch (properties.getProperty("mode")) {
             case "PLANER":
                 return Mode.PLANER;
             case "METER":
                 return Mode.TRANSACTION_METER;
         }
         throw new IllegalArgumentException("Bad mode");
+    }
+
+    public boolean isIndexEnabled() {
+        return Boolean.parseBoolean(properties.getProperty("index"));
+    }
+
+    public boolean isClearRunEnabled() {
+        return Boolean.parseBoolean(properties.getProperty("index-clear-run"));
     }
 }
