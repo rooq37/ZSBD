@@ -7,3 +7,7 @@ CREATE BITMAP INDEX city_addresses
 ON  "addresses" ("city");
 CREATE INDEX "isbn_reviews"
 ON "reviews"("isbn");
+CREATE BITMAP INDEX publication_year_books
+ON      "reviews" ("books"."publication_year")
+FROM   "reviews", "books"
+WHERE   "books"."isbn" = "reviews"."isbn";
