@@ -1,3 +1,5 @@
 CREATE BITMAP INDEX order_status_i ON "orders"("status");
 create index orders_pkx
 on "orders"("customer_email");
+CREATE INDEX "extract_year"
+ON "customers"(EXTRACT( YEAR from "registration_date"));
