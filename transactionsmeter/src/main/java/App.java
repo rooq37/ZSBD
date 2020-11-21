@@ -29,7 +29,7 @@ public class App {
             for (Path transactionsPath : Utils.getTransactionsPaths()) {
                 try {
                     String query = Files.readString(transactionsPath);
-                    executeTransactionAndPrintResults(transactionsPath.toString(), query, props.getNumberOfIteration());
+                    executeTransactionAndPrintResults(transactionsPath.toString(), query, props.getNumberOfIteration(), hasIndex);
                 } catch (SQLException | IOException e) {
                     e.printStackTrace();
                 }
@@ -43,13 +43,13 @@ public class App {
         Utils.closeConnections();
     }
 
-    public static void executeTransactionAndPrintResults(String name, String query, int count) throws SQLException, InterruptedException, IOException {
+    public static void executeTransactionAndPrintResults(String name, String query, int count, boolean hasIndex) throws SQLException, InterruptedException, IOException {
         List<Long> times = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             if (APP_MODE.equals(Mode.PLANER)) {
-                times.add(executeUserQuery(name, String.format("explain plan set statement_id= '%s' for %s", name, query)));
+                times.add(executeUserQuery(name, String.format("explain plan set statement_id= '%s' for %s", name, query), hasIndex));
             } else {
-                times.add(executeUserQuery(name, query));
+                times.add(executeUserQuery(name, query, hasIndex));
                 Thread.sleep(props.getSleepBetweenIterations());
                 System.out.print("*");
             }
@@ -66,7 +66,7 @@ public class App {
         System.out.println("Times: " + times);
     }
 
-    public static long executeUserQuery(String name, String query) throws SQLException, IOException {
+    public static long executeUserQuery(String name, String query, boolean hasIndex) throws SQLException, IOException {
         Utils.checkDatabase();
         Utils.clearCaches();
 
@@ -85,7 +85,7 @@ public class App {
         statement.close();
 
         if (APP_MODE.equals(Mode.PLANER)) {
-            Utils.savePlanToFile(name);
+            Utils.savePlanToFile(name, hasIndex);
         }
         if (my_savepoint != null) {
             Utils.getUserConnection().rollback(my_savepoint);

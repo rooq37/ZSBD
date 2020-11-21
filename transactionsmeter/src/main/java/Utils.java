@@ -34,11 +34,11 @@ public class Utils {
         fileWriter.close();
     }
 
-    public static void savePlanToFile(String name) throws SQLException, IOException {
+    public static void savePlanToFile(String name, boolean hasIndex) throws SQLException, IOException {
         FileWriter fileWriter = new FileWriter(props.getPlansFilename(), true);
         PrintWriter printWriter = new PrintWriter(fileWriter);
         printWriter.println("");
-        printWriter.println(" **** Indexes: " +  props.isIndexEnabled() + " **** " + name + " **********");
+        printWriter.println(" **** Indexes: " +  hasIndex + " **** " + name + " **********");
 
         Statement statement = Utils.getUserConnection().createStatement();
         ResultSet resultSet = statement.executeQuery("SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY())");
