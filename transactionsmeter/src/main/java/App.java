@@ -60,9 +60,9 @@ public class App {
 
         System.out.printf("*********** TRANSACTION || %s **********%n", name);
         System.out.println("Count: " + count);
-        System.out.println("Average: " + average + "ms");
-        System.out.println("Min: " + min + "ms");
-        System.out.println("Max: " + max + "ms");
+        System.out.println("Average: " + average / 1000 + "s");
+        System.out.println("Min: " + min / 1000 + "s");
+        System.out.println("Max: " + max / 1000 + "s");
         System.out.println("Times: " + times);
     }
 

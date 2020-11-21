@@ -29,15 +29,15 @@ public class SqlCollections {
                     Paths.get("transaction-7.sql"),
                     Paths.get("transaction-8a.sql"),
                     Paths.get("transaction-8b.sql"),
-                    Paths.get("transaction-8c.sql")
+                    Paths.get("transaction-8c.sql"),
+                    Paths.get("transaction-9.sql")
             );
     private static List<Path> CUSTOM_PLAN = Arrays.asList(
-            Paths.get("transaction-1.sql"),
-            Paths.get("transaction-3.sql")
+            Paths.get("transaction-7.sql")
     );
 
     static {
-        ACTUAL = CUSTOM_PLAN;
+        ACTUAL = ALL_PLANS;
     }
 
 

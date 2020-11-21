@@ -38,7 +38,7 @@ public class Utils {
         FileWriter fileWriter = new FileWriter(props.getPlansFilename(), true);
         PrintWriter printWriter = new PrintWriter(fileWriter);
         printWriter.println("");
-        printWriter.println(" ********** " + name + " **********");
+        printWriter.println(" **** Indexes: " +  props.isIndexEnabled() + " **** " + name + " **********");
 
         Statement statement = Utils.getUserConnection().createStatement();
         ResultSet resultSet = statement.executeQuery("SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY())");
@@ -151,7 +151,7 @@ public class Utils {
 
     public static List<Boolean> getBooleansForIndex() {
         return (
-                props.isIndexEnabled() && props.getMode().equals(Mode.TRANSACTION_METER)
+                props.isIndexEnabled()
                         ? (props.isClearRunEnabled() ? Arrays.asList(false, true) : Collections.singletonList(true))
                         : Collections.singletonList(false)
         );
