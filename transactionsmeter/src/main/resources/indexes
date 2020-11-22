@@ -1,4 +1,3 @@
-CREATE BITMAP INDEX order_status_i ON "orders"("status");
 CREATE INDEX orders_email
 ON "orders"("customer_email");
 CREATE INDEX "extract_year"
@@ -7,7 +6,8 @@ CREATE BITMAP INDEX city_addresses
 ON  "addresses" ("city");
 CREATE INDEX "isbn_reviews_rating"
 ON "reviews"("isbn", "rating");
-CREATE BITMAP INDEX publication_year_books
-ON      "reviews" ("books"."publication_year")
-FROM   "reviews", "books"
-WHERE   "books"."isbn" = "reviews"."isbn";
+CREATE BITMAP INDEX order_items_country
+ON "order_items" ("publishers"."country")
+FROM "books", "order_items", "publishers"
+WHERE "books"."isbn" =  "order_items"."isbn"
+AND "publishers"."publisher_id" = "books"."publisher_id";

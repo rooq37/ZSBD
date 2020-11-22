@@ -8,9 +8,6 @@ UPDATE "books" B
                 AND
                 "order_id" IN (SELECT "order_id" FROM "orders" WHERE "status"='ORDER_PLACED') )
     WHERE
-        B."publisher_id" IN (SELECT "publisher_id" FROM "publishers" WHERE "city" = 'Yutou')
+        B."publisher_id" IN (SELECT "publisher_id" FROM "publishers" WHERE "country" = 'Russia')
     AND
         B."isbn" IN (SELECT "isbn" FROM "order_items" WHERE "order_id" IN (SELECT "order_id" FROM "orders" WHERE "status"='ORDER_PLACED'))
-
-
-
