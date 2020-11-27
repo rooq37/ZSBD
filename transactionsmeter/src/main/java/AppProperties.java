@@ -39,6 +39,10 @@ public class AppProperties {
         return config.getProperty("index-filename");
     }
 
+    public String getPartitionFilename() {
+        return config.getProperty("partition-filename");
+    }
+
     public int getNumberOfIteration() {
         Mode mode = getMode();
         if (mode == Mode.TRANSACTION_METER) {
@@ -62,15 +66,23 @@ public class AppProperties {
     }
 
     public boolean isClearRunEnabled() {
-        return Boolean.parseBoolean(config.getProperty("index-clear-run"));
+        return Boolean.parseBoolean(config.getProperty("clear-run"));
     }
 
     public boolean isCalculateStats() {
         return Boolean.parseBoolean(config.getProperty("calculate-stats"));
     }
 
-    public boolean isRestoreBackup(){
-        return Boolean.parseBoolean(config.getProperty("restore-backup"));
+    public boolean isPartitionsEnabled() {
+        return Boolean.parseBoolean(config.getProperty("partition"));
+    }
+
+    public boolean isRestoreBackupOnStart() {
+        return Boolean.parseBoolean(config.getProperty("restore-backup-on-start"));
+    }
+
+    public boolean isRestoreBackupOnEnd() {
+        return Boolean.parseBoolean(config.getProperty("restore-backup-on-end"));
     }
 
     public int getSleepBetweenIterations() {

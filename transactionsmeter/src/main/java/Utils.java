@@ -33,11 +33,11 @@ public class Utils {
         fileWriter.close();
     }
 
-    public static void savePlanToFile(String name, boolean hasIndex) throws SQLException, IOException {
+    public static void savePlanToFile(String name, boolean hasIndex, boolean hasPartition) throws SQLException, IOException {
         FileWriter fileWriter = new FileWriter(props.getPlansFilename(), true);
         PrintWriter printWriter = new PrintWriter(fileWriter);
         printWriter.println("");
-        printWriter.println(" **** Indexes: " +  hasIndex + " **** " + name + " **********");
+        printWriter.println(" **** Indexes: " + hasIndex + ", Partitions: " + hasPartition + " **** " + name + " **********");
 
         Statement statement = Utils.getUserConnection().createStatement();
         ResultSet resultSet = statement.executeQuery("SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY())");
@@ -88,6 +88,15 @@ public class Utils {
             statement.close();
         }
         userConnection.commit();
+    }
+
+    public static void loadPartitions() throws IOException, SQLException {
+        String content = Files.readString(Paths.get(props.getPartitionFilename()));
+        for (String query : content.split(";")) {
+            Statement statement = Utils.getSystemConnection().createStatement();
+            statement.executeQuery(query);
+            statement.close();
+        }
     }
 
     public static void checkDatabase() throws SQLException {

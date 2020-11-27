@@ -15,13 +15,13 @@ public class App {
 
     public static void main(String[] args) throws SQLException, IOException {
         Utils.establishConnection();
-        if (props.isRestoreBackup()) Utils.restoreBackup();
+        if (props.isRestoreBackupOnStart()) Utils.restoreBackup();
         if (APP_MODE.equals(Mode.PLANER)) Utils.clearPlanFile();
 
         if (props.isClearRunEnabled()) {
             System.out.println();
             System.out.printf("###############*********** Clean RUN || %s mode **********###################%n", APP_MODE);
-            runAllTransactions(false);
+            runAllTransactions(false, false);
         }
 
         if (props.isIndexEnabled()) {
@@ -29,33 +29,44 @@ public class App {
             Utils.setAllIndexes();
             System.out.printf("###############*********** RUN || %s mode **********###################%n", APP_MODE);
             System.out.println("############*********** INDEXES ADDED!!! **********###############");
-            runAllTransactions(true);
+            runAllTransactions(true, false);
             Utils.removeAllIndexes();
             System.out.println("############*********** INDEXES REMOVED!!! **********###############");
         }
 
+        if (props.isPartitionsEnabled()) {
+            System.out.println();
+            Utils.loadPartitions();
+            System.out.printf("###############*********** RUN || %s mode **********###################%n", APP_MODE);
+            System.out.println("############*********** PARTITONS ADDED!!! **********###############");
+            runAllTransactions(false, true);
+            Utils.restoreBackup();
+            System.out.println("############*********** PARTITIONS REMOVED!!! **********###############");
+        }
+
+        if (props.isRestoreBackupOnEnd()) Utils.restoreBackup();
         Utils.closeConnections();
     }
 
-    public static void runAllTransactions(boolean hasIndex) throws IOException, SQLException {
+    public static void runAllTransactions(boolean hasIndex, boolean hasPartitions) throws IOException, SQLException {
         if (props.isCalculateStats()) Utils.calculateStats();
         for (Path transactionsPath : Utils.getTransactionsPaths()) {
             try {
                 String query = Files.readString(transactionsPath);
-                executeTransactionAndPrintResults(transactionsPath.toString(), query, props.getNumberOfIteration(), hasIndex);
+                executeTransactionAndPrintResults(transactionsPath.toString(), query, props.getNumberOfIteration(), hasIndex, hasPartitions);
             } catch (SQLException | IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public static void executeTransactionAndPrintResults(String name, String query, int count, boolean hasIndex) throws SQLException, InterruptedException, IOException {
+    public static void executeTransactionAndPrintResults(String name, String query, int count, boolean hasIndex, boolean hasPartition) throws SQLException, InterruptedException, IOException {
         List<Long> times = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             if (APP_MODE.equals(Mode.PLANER)) {
-                times.add(executeUserQuery(name, String.format("explain plan set statement_id= '%s' for %s", name, query), hasIndex));
+                times.add(executeUserQuery(name, String.format("explain plan set statement_id= '%s' for %s", name, query), hasIndex, hasPartition));
             } else {
-                times.add(executeUserQuery(name, query, hasIndex));
+                times.add(executeUserQuery(name, query, hasIndex, hasPartition));
                 Thread.sleep(props.getSleepBetweenIterations());
                 System.out.print("*");
             }
@@ -72,7 +83,7 @@ public class App {
         System.out.println("Times: " + times);
     }
 
-    public static long executeUserQuery(String name, String query, boolean hasIndex) throws SQLException, IOException {
+    public static long executeUserQuery(String name, String query, boolean hasIndex, boolean hasPartition) throws SQLException, IOException {
         Utils.checkDatabase();
         Utils.clearCaches();
 
@@ -91,7 +102,7 @@ public class App {
         statement.close();
 
         if (APP_MODE.equals(Mode.PLANER)) {
-            Utils.savePlanToFile(name, hasIndex);
+            Utils.savePlanToFile(name, hasIndex, hasPartition);
         }
         if (my_savepoint != null) {
             Utils.getUserConnection().rollback(my_savepoint);
