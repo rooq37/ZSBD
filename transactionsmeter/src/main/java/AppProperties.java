@@ -65,6 +65,10 @@ public class AppProperties {
         return Boolean.parseBoolean(config.getProperty("index-clear-run"));
     }
 
+    public boolean isCalculateStats() {
+        return Boolean.parseBoolean(config.getProperty("calculate-stats"));
+    }
+
     public int getSleepBetweenIterations() {
         return Integer.parseInt(config.getProperty("sleep-between-iterations"));
     }

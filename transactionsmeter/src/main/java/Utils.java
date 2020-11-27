@@ -3,9 +3,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -149,17 +148,15 @@ public class Utils {
         return props;
     }
 
-    public static List<Boolean> getBooleansForIndex() {
-        return (
-                props.isIndexEnabled()
-                        ? (props.isClearRunEnabled() ? Arrays.asList(false, true) : Collections.singletonList(true))
-                        : Collections.singletonList(false)
-        );
-    }
-
     public static void clearCaches() throws SQLException {
         Statement statement = Utils.getSystemConnection().createStatement();
         statement.executeQuery("alter system flush buffer_cache");
         statement.executeQuery("alter system flush shared_pool");
+    }
+
+    public static void calculateStats() throws SQLException, IOException {
+        CallableStatement statement = Utils.getSystemConnection().prepareCall(Files.readString(Paths.get("calculate_stats")));
+        statement.execute();
+        statement.close();
     }
 }

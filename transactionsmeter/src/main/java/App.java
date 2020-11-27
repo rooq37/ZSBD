@@ -13,34 +13,39 @@ public class App {
     private static final AppProperties props = Utils.getProps();
     private static final Mode APP_MODE = props.getMode();
 
-    public static void main(String[] args) throws SQLException, InterruptedException, IOException {
+    public static void main(String[] args) throws SQLException, IOException {
         Utils.establishConnection();
         if (APP_MODE.equals(Mode.PLANER)) Utils.clearPlanFile();
 
-        for (boolean hasIndex : Utils.getBooleansForIndex()) {
-            if (hasIndex) {
-                System.out.println();
-                Utils.setAllIndexes();
-                System.out.println("############*********** INDEXES ADDED!!! **********###############");
-            } else {
-                System.out.println();
-                System.out.printf("###############*********** Clean RUN || %s mode **********###################%n", APP_MODE);
-            }
-            for (Path transactionsPath : Utils.getTransactionsPaths()) {
-                try {
-                    String query = Files.readString(transactionsPath);
-                    executeTransactionAndPrintResults(transactionsPath.toString(), query, props.getNumberOfIteration(), hasIndex);
-                } catch (SQLException | IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (hasIndex) {
-                Utils.removeAllIndexes();
-                System.out.println("############*********** INDEXES REMOVED!!! **********###############");
-            }
+        if (props.isClearRunEnabled()) {
+            System.out.println();
+            System.out.printf("###############*********** Clean RUN || %s mode **********###################%n", APP_MODE);
+            runAllTransactions(false);
+        }
+
+        if (props.isIndexEnabled()) {
+            System.out.println();
+            Utils.setAllIndexes();
+            System.out.printf("###############*********** RUN || %s mode **********###################%n", APP_MODE);
+            System.out.println("############*********** INDEXES ADDED!!! **********###############");
+            runAllTransactions(true);
+            Utils.removeAllIndexes();
+            System.out.println("############*********** INDEXES REMOVED!!! **********###############");
         }
 
         Utils.closeConnections();
+    }
+
+    public static void runAllTransactions(boolean hasIndex) throws IOException, SQLException {
+        if (props.isCalculateStats()) Utils.calculateStats();
+        for (Path transactionsPath : Utils.getTransactionsPaths()) {
+            try {
+                String query = Files.readString(transactionsPath);
+                executeTransactionAndPrintResults(transactionsPath.toString(), query, props.getNumberOfIteration(), hasIndex);
+            } catch (SQLException | IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void executeTransactionAndPrintResults(String name, String query, int count, boolean hasIndex) throws SQLException, InterruptedException, IOException {

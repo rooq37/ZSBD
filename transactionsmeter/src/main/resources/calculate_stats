@@ -1,0 +1,11 @@
+begin
+DBMS_STATS.GATHER_TABLE_STATS (ownname => '"ZSBDUSER"', tabname => '"order_items"', estimate_percent => 1);
+DBMS_STATS.GATHER_TABLE_STATS (ownname => '"ZSBDUSER"', tabname => '"orders"', estimate_percent => 1);
+DBMS_STATS.GATHER_TABLE_STATS (ownname => '"ZSBDUSER"', tabname => '"addresses"', estimate_percent => 1);
+DBMS_STATS.GATHER_TABLE_STATS (ownname => '"ZSBDUSER"', tabname => '"customers"', estimate_percent => 1);
+DBMS_STATS.GATHER_TABLE_STATS (ownname => '"ZSBDUSER"', tabname => '"reviews"', estimate_percent => 1);
+DBMS_STATS.GATHER_TABLE_STATS (ownname => '"ZSBDUSER"', tabname => '"books"', estimate_percent => 1);
+DBMS_STATS.GATHER_TABLE_STATS (ownname => '"ZSBDUSER"', tabname => '"authors"', estimate_percent => 1);
+DBMS_STATS.GATHER_TABLE_STATS (ownname => '"ZSBDUSER"', tabname => '"publishers"', estimate_percent => 1);
+DBMS_STATS.GATHER_TABLE_STATS (ownname => '"ZSBDUSER"', tabname => '"categories"', estimate_percent => 1);
+end;
