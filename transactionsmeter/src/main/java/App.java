@@ -15,6 +15,7 @@ public class App {
 
     public static void main(String[] args) throws SQLException, IOException {
         Utils.establishConnection();
+        if (props.isRestoreBackup()) Utils.restoreBackup();
         if (APP_MODE.equals(Mode.PLANER)) Utils.clearPlanFile();
 
         if (props.isClearRunEnabled()) {

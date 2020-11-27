@@ -69,6 +69,10 @@ public class AppProperties {
         return Boolean.parseBoolean(config.getProperty("calculate-stats"));
     }
 
+    public boolean isRestoreBackup(){
+        return Boolean.parseBoolean(config.getProperty("restore-backup"));
+    }
+
     public int getSleepBetweenIterations() {
         return Integer.parseInt(config.getProperty("sleep-between-iterations"));
     }

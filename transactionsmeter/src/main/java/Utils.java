@@ -152,11 +152,21 @@ public class Utils {
         Statement statement = Utils.getSystemConnection().createStatement();
         statement.executeQuery("alter system flush buffer_cache");
         statement.executeQuery("alter system flush shared_pool");
+        statement.close();
     }
 
     public static void calculateStats() throws SQLException, IOException {
         CallableStatement statement = Utils.getSystemConnection().prepareCall(Files.readString(Paths.get("calculate_stats")));
         statement.execute();
         statement.close();
+    }
+
+    public static void restoreBackup() throws SQLException, IOException {
+        String content = Files.readString(Paths.get("restore_backup"));
+        for (String query : content.split(";")) {
+            Statement statement = Utils.getSystemConnection().createStatement();
+            statement.executeQuery(query);
+            statement.close();
+        }
     }
 }
