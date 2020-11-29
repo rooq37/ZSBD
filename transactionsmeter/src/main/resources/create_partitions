@@ -30,7 +30,7 @@ CREATE TABLE zsbduser."publishers"
 --    PARTITION publishers_russia VALUES ('Russia'),
 --    PARTITION publishers_the_rest VALUES (DEFAULT)
 --)
---PARTITION BY HASH ("country") PARTITIONS 10
+PARTITION BY HASH ("country") PARTITIONS 10
 ;
 CREATE TABLE zsbduser."authors"
 (
@@ -66,11 +66,11 @@ CREATE TABLE zsbduser."books"
     CONSTRAINT "quantity_in_stock_gtq_0" CHECK ("quantity_in_stock" >= 0),
     CONSTRAINT "quantity_sold_gtq_0" CHECK ("quantity_sold" >= 0)
 )
---PARTITION BY RANGE ("publication_year")(
---    PARTITION books_p1 VALUES LESS THAN (2000),
---    PARTITION books_p2 VALUES LESS THAN (2002),
---    PARTITION books_p3 VALUES LESS THAN (2021)
---)
+PARTITION BY RANGE ("publication_year")(
+    PARTITION books_p1 VALUES LESS THAN (2000),
+    PARTITION books_p2 VALUES LESS THAN (2002),
+    PARTITION books_p3 VALUES LESS THAN (2021)
+)
 ;
 CREATE TABLE zsbduser."reviews"
 (
@@ -86,7 +86,7 @@ CREATE TABLE zsbduser."reviews"
     CONSTRAINT "reviews_pk" PRIMARY KEY ("review_id"),
     CONSTRAINT "fk_book" FOREIGN KEY ("isbn") REFERENCES zsbduser."books"("isbn")
 )
---PARTITION BY HASH ("isbn") PARTITIONS 5
+PARTITION BY HASH ("isbn") PARTITIONS 5
 ;
 CREATE TABLE zsbduser."customers"
 (
@@ -99,10 +99,10 @@ CREATE TABLE zsbduser."customers"
     "registration_date" DATE NOT NULL,
     CONSTRAINT "customers_pk" PRIMARY KEY ("email")
 )
---PARTITION BY RANGE ("registration_date")(
---    PARTITION customers_p1 VALUES LESS THAN (TO_DATE('01/01/2012','DD/MM/YYYY')),
---    PARTITION customers_p2 VALUES LESS THAN (TO_DATE('01/01/2021','DD/MM/YYYY'))
---)
+PARTITION BY RANGE ("registration_date")(
+    PARTITION customers_p1 VALUES LESS THAN (TO_DATE('01/01/2012','DD/MM/YYYY')),
+    PARTITION customers_p2 VALUES LESS THAN (TO_DATE('01/01/2021','DD/MM/YYYY'))
+)
 ;
 CREATE TABLE zsbduser."addresses"
 (
@@ -113,7 +113,8 @@ CREATE TABLE zsbduser."addresses"
     "house_number" VARCHAR2(10) NOT NULL,
     "apartment_number" VARCHAR2(10),
     CONSTRAINT "addresses_pk" PRIMARY KEY ("address_id")
-);
+)
+;
 CREATE TABLE zsbduser."orders"
 (
     "order_id" NUMBER(5) NOT NULL,
@@ -134,13 +135,13 @@ CREATE TABLE zsbduser."orders"
     CONSTRAINT "dates_check" CHECK ("modification_date" >= "creation_date"),
     CONSTRAINT "status_enum" CHECK ("status" IN ('ORDER_PLACED', 'ORDER_CONFIRMED', 'ORDER_SHIPPED' ,'ORDER_CANCELLED'))
 )
-PARTITION BY LIST ("status")(
-    PARTITION orders_placed VALUES ('ORDER_PLACED'),
-    PARTITION orders_confirmed VALUES ('ORDER_CONFIRMED'),
-    PARTITION orders_shipped VALUES ('ORDER_SHIPPED'),
-    PARTITION orders_cancelled VALUES ('ORDER_CANCELLED')
-)
---PARTITION BY HASH ("customer_email") PARTITIONS 10
+--PARTITION BY LIST ("status")(
+--    PARTITION orders_placed VALUES ('ORDER_PLACED') STORAGE (INITIAL 4M) TABLESPACE stat1,
+--    PARTITION orders_confirmed VALUES ('ORDER_CONFIRMED') STORAGE (INITIAL 4M) TABLESPACE stat2,
+--    PARTITION orders_shipped VALUES ('ORDER_SHIPPED') STORAGE (INITIAL 4M) TABLESPACE stat3,
+--    PARTITION orders_cancelled VALUES ('ORDER_CANCELLED') STORAGE (INITIAL 4M) TABLESPACE stat4
+--)
+PARTITION BY HASH ("customer_email") PARTITIONS 10
 ;
 CREATE TABLE zsbduser."order_items"
 (
@@ -150,7 +151,9 @@ CREATE TABLE zsbduser."order_items"
     CONSTRAINT "order_items_pk" PRIMARY KEY ("isbn", "order_id"),
     CONSTRAINT "fk_isbn" FOREIGN KEY ("isbn") REFERENCES zsbduser."books"("isbn"),
     CONSTRAINT "fk_order" FOREIGN KEY ("order_id") REFERENCES zsbduser."orders"("order_id")
-);
+)
+PARTITION BY HASH ("isbn") PARTITIONS 10
+;
 insert into zsbduser."categories" ( select * from backupuser."backup_categories");
 insert into zsbduser."publishers" ( select * from backupuser."backup_publishers");
 insert into zsbduser."authors" ( select * from backupuser."backup_authors");
