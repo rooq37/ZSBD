@@ -25,7 +25,13 @@ CREATE TABLE zsbduser."publishers"
     "city" VARCHAR2(255),
     "country" VARCHAR2(255),
     CONSTRAINT "publishers_pk" PRIMARY KEY ("publisher_id")
-);
+)
+--PARTITION BY LIST ("country")(
+--    PARTITION publishers_russia VALUES ('Russia'),
+--    PARTITION publishers_the_rest VALUES (DEFAULT)
+--)
+--PARTITION BY HASH ("country") PARTITIONS 10
+;
 CREATE TABLE zsbduser."authors"
 (
     "author_id" NUMBER(5) NOT NULL,
@@ -59,7 +65,13 @@ CREATE TABLE zsbduser."books"
     CONSTRAINT "price_gt_0" CHECK ("price" > 0),
     CONSTRAINT "quantity_in_stock_gtq_0" CHECK ("quantity_in_stock" >= 0),
     CONSTRAINT "quantity_sold_gtq_0" CHECK ("quantity_sold" >= 0)
-);
+)
+--PARTITION BY RANGE ("publication_year")(
+--    PARTITION books_p1 VALUES LESS THAN (2000),
+--    PARTITION books_p2 VALUES LESS THAN (2002),
+--    PARTITION books_p3 VALUES LESS THAN (2021)
+--)
+;
 CREATE TABLE zsbduser."reviews"
 (
     "review_id" NUMBER(5) NOT NULL,
@@ -73,7 +85,9 @@ CREATE TABLE zsbduser."reviews"
     "isbn" VARCHAR2(13) NOT NULL,
     CONSTRAINT "reviews_pk" PRIMARY KEY ("review_id"),
     CONSTRAINT "fk_book" FOREIGN KEY ("isbn") REFERENCES zsbduser."books"("isbn")
-);
+)
+--PARTITION BY HASH ("isbn") PARTITIONS 5
+;
 CREATE TABLE zsbduser."customers"
 (
     "email" VARCHAR2(255) NOT NULL,
@@ -85,10 +99,11 @@ CREATE TABLE zsbduser."customers"
     "registration_date" DATE NOT NULL,
     CONSTRAINT "customers_pk" PRIMARY KEY ("email")
 )
-PARTITION BY RANGE ("registration_date")(
-    PARTITION customers_p1 VALUES LESS THAN (TO_DATE('01/01/2012','DD/MM/YYYY')),
-    PARTITION customers_p2 VALUES LESS THAN (TO_DATE('01/01/2021','DD/MM/YYYY'))
-);
+--PARTITION BY RANGE ("registration_date")(
+--    PARTITION customers_p1 VALUES LESS THAN (TO_DATE('01/01/2012','DD/MM/YYYY')),
+--    PARTITION customers_p2 VALUES LESS THAN (TO_DATE('01/01/2021','DD/MM/YYYY'))
+--)
+;
 CREATE TABLE zsbduser."addresses"
 (
     "address_id" NUMBER(5) NOT NULL,
@@ -119,6 +134,13 @@ CREATE TABLE zsbduser."orders"
     CONSTRAINT "dates_check" CHECK ("modification_date" >= "creation_date"),
     CONSTRAINT "status_enum" CHECK ("status" IN ('ORDER_PLACED', 'ORDER_CONFIRMED', 'ORDER_SHIPPED' ,'ORDER_CANCELLED'))
 )
+PARTITION BY LIST ("status")(
+    PARTITION orders_placed VALUES ('ORDER_PLACED'),
+    PARTITION orders_confirmed VALUES ('ORDER_CONFIRMED'),
+    PARTITION orders_shipped VALUES ('ORDER_SHIPPED'),
+    PARTITION orders_cancelled VALUES ('ORDER_CANCELLED')
+)
+--PARTITION BY HASH ("customer_email") PARTITIONS 10
 ;
 CREATE TABLE zsbduser."order_items"
 (
