@@ -26,11 +26,11 @@ CREATE TABLE zsbduser."publishers"
     "country" VARCHAR2(255),
     CONSTRAINT "publishers_pk" PRIMARY KEY ("publisher_id")
 )
---PARTITION BY LIST ("country")(
---    PARTITION publishers_russia VALUES ('Russia'),
---    PARTITION publishers_the_rest VALUES (DEFAULT)
---)
-PARTITION BY HASH ("country") PARTITIONS 10
+PARTITION BY LIST ("country")(
+    PARTITION publishers_russia VALUES ('Russia'),
+    PARTITION publishers_the_rest VALUES (DEFAULT)
+)
+--PARTITION BY HASH ("country") PARTITIONS 10
 ;
 CREATE TABLE zsbduser."authors"
 (
@@ -69,7 +69,7 @@ CREATE TABLE zsbduser."books"
 PARTITION BY RANGE ("publication_year")(
     PARTITION books_p1 VALUES LESS THAN (2000),
     PARTITION books_p2 VALUES LESS THAN (2002),
-    PARTITION books_p3 VALUES LESS THAN (2021)
+    PARTITION books_p3 VALUES LESS THAN (MAXVALUE)
 )
 ;
 CREATE TABLE zsbduser."reviews"
@@ -101,7 +101,7 @@ CREATE TABLE zsbduser."customers"
 )
 PARTITION BY RANGE ("registration_date")(
     PARTITION customers_p1 VALUES LESS THAN (TO_DATE('01/01/2012','DD/MM/YYYY')),
-    PARTITION customers_p2 VALUES LESS THAN (TO_DATE('01/01/2021','DD/MM/YYYY'))
+    PARTITION customers_p2 VALUES LESS THAN (MAXVALUE)
 )
 ;
 CREATE TABLE zsbduser."addresses"
@@ -114,6 +114,7 @@ CREATE TABLE zsbduser."addresses"
     "apartment_number" VARCHAR2(10),
     CONSTRAINT "addresses_pk" PRIMARY KEY ("address_id")
 )
+PARTITION BY HASH ("city") PARTITIONS 10
 ;
 CREATE TABLE zsbduser."orders"
 (
@@ -152,7 +153,7 @@ CREATE TABLE zsbduser."order_items"
     CONSTRAINT "fk_isbn" FOREIGN KEY ("isbn") REFERENCES zsbduser."books"("isbn"),
     CONSTRAINT "fk_order" FOREIGN KEY ("order_id") REFERENCES zsbduser."orders"("order_id")
 )
-PARTITION BY HASH ("isbn") PARTITIONS 10
+--PARTITION BY HASH ("isbn") PARTITIONS 10
 ;
 insert into zsbduser."categories" ( select * from backupuser."backup_categories");
 insert into zsbduser."publishers" ( select * from backupuser."backup_publishers");
