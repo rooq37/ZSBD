@@ -69,6 +69,10 @@ public class AppProperties {
         return Boolean.parseBoolean(config.getProperty("clear-run"));
     }
 
+    public boolean isInMemoryEnabled(){
+        return Boolean.parseBoolean(config.getProperty("in-memory"));
+    }
+
     public boolean isCalculateStats() {
         return Boolean.parseBoolean(config.getProperty("calculate-stats"));
     }

@@ -33,11 +33,11 @@ public class Utils {
         fileWriter.close();
     }
 
-    public static void savePlanToFile(String name, boolean hasIndex, boolean hasPartition) throws SQLException, IOException {
+    public static void savePlanToFile(String name, boolean hasIndex, boolean hasPartition, boolean hasInMemory) throws SQLException, IOException {
         FileWriter fileWriter = new FileWriter(props.getPlansFilename(), true);
         PrintWriter printWriter = new PrintWriter(fileWriter);
         printWriter.println("");
-        printWriter.println(" **** Indexes: " + hasIndex + ", Partitions: " + hasPartition + " **** " + name + " **********");
+        printWriter.println(" **** Indexes: " + hasIndex + ", Partitions: " + hasPartition + ", InMemory: " + hasInMemory +" **** " + name + " **********");
 
         Statement statement = Utils.getUserConnection().createStatement();
         ResultSet resultSet = statement.executeQuery("SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY())");
@@ -174,6 +174,15 @@ public class Utils {
         String content = Files.readString(Paths.get("restore_backup"));
         for (String query : content.split(";")) {
             Statement statement = Utils.getSystemConnection().createStatement();
+            statement.executeQuery(query);
+            statement.close();
+        }
+    }
+
+    public static void addInMemory() throws SQLException, IOException {
+        String content = Files.readString(Paths.get("inmemory"));
+        for (String query : content.split(";")) {
+            Statement statement = Utils.getUserConnection().createStatement();
             statement.executeQuery(query);
             statement.close();
         }

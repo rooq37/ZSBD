@@ -21,7 +21,7 @@ public class App {
         if (props.isClearRunEnabled()) {
             System.out.println();
             System.out.printf("###############*********** Clean RUN || %s mode **********###################%n", APP_MODE);
-            runAllTransactions(false, false);
+            runAllTransactions(false, false, false);
         }
 
         if (props.isIndexEnabled()) {
@@ -29,7 +29,7 @@ public class App {
             Utils.setAllIndexes();
             System.out.printf("###############*********** RUN || %s mode **********###################%n", APP_MODE);
             System.out.println("############*********** INDEXES ADDED!!! **********###############");
-            runAllTransactions(true, false);
+            runAllTransactions(true, false, false);
             Utils.removeAllIndexes();
             System.out.println("############*********** INDEXES REMOVED!!! **********###############");
         }
@@ -39,34 +39,44 @@ public class App {
             Utils.loadPartitions();
             System.out.printf("###############*********** RUN || %s mode **********###################%n", APP_MODE);
             System.out.println("############*********** PARTITONS ADDED!!! **********###############");
-            runAllTransactions(false, true);
+            runAllTransactions(false, false, true);
             Utils.restoreBackup();
             System.out.println("############*********** PARTITIONS REMOVED!!! **********###############");
+        }
+
+        if(props.isInMemoryEnabled()){
+            System.out.println();
+            Utils.addInMemory();
+            System.out.printf("###############*********** RUN || %s mode **********###################%n", APP_MODE);
+            System.out.println("############*********** IN MEMORY ADDED!!! **********###############");
+            runAllTransactions(false, false, true);
+            Utils.restoreBackup();
+            System.out.println("############*********** IN MEMORY REMOVED!!! **********###############");
         }
 
         if (props.isRestoreBackupOnEnd()) Utils.restoreBackup();
         Utils.closeConnections();
     }
 
-    public static void runAllTransactions(boolean hasIndex, boolean hasPartitions) throws IOException, SQLException {
+    public static void runAllTransactions(boolean hasIndex, boolean hasPartitions, boolean hasInMemory) throws IOException, SQLException {
         if (props.isCalculateStats()) Utils.calculateStats();
         for (Path transactionsPath : Utils.getTransactionsPaths()) {
             try {
                 String query = Files.readString(transactionsPath);
-                executeTransactionAndPrintResults(transactionsPath.toString(), query, props.getNumberOfIteration(), hasIndex, hasPartitions);
+                executeTransactionAndPrintResults(transactionsPath.toString(), query, props.getNumberOfIteration(), hasIndex, hasPartitions, hasInMemory);
             } catch (SQLException | IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public static void executeTransactionAndPrintResults(String name, String query, int count, boolean hasIndex, boolean hasPartition) throws SQLException, InterruptedException, IOException {
+    public static void executeTransactionAndPrintResults(String name, String query, int count, boolean hasIndex, boolean hasPartition, boolean hasInMemory) throws SQLException, InterruptedException, IOException {
         List<Long> times = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             if (APP_MODE.equals(Mode.PLANER)) {
-                times.add(executeUserQuery(name, String.format("explain plan set statement_id= '%s' for %s", name, query), hasIndex, hasPartition));
+                times.add(executeUserQuery(name, String.format("explain plan set statement_id= '%s' for %s", name, query), hasIndex, hasPartition, hasInMemory));
             } else {
-                times.add(executeUserQuery(name, query, hasIndex, hasPartition));
+                times.add(executeUserQuery(name, query, hasIndex, hasPartition, hasInMemory));
                 Thread.sleep(props.getSleepBetweenIterations());
                 System.out.print("*");
             }
@@ -83,7 +93,7 @@ public class App {
         System.out.println("Times: " + times);
     }
 
-    public static long executeUserQuery(String name, String query, boolean hasIndex, boolean hasPartition) throws SQLException, IOException {
+    public static long executeUserQuery(String name, String query, boolean hasIndex, boolean hasPartition, boolean hasInMemory) throws SQLException, IOException {
         Utils.checkDatabase();
         Utils.clearCaches();
 
@@ -102,7 +112,7 @@ public class App {
         statement.close();
 
         if (APP_MODE.equals(Mode.PLANER)) {
-            Utils.savePlanToFile(name, hasIndex, hasPartition);
+            Utils.savePlanToFile(name, hasIndex, hasPartition, hasInMemory);
         }
         if (my_savepoint != null) {
             Utils.getUserConnection().rollback(my_savepoint);
