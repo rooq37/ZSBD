@@ -1,1 +1,21 @@
+ALTER TABLE "customers" NO INMEMORY;
+ALTER TABLE "customers" ADD registration_year INVISIBLE
+as (EXTRACT( YEAR from "registration_date"));
+ALTER TABLE "customers" INMEMORY;
+SELECT COUNT(*) FROM "customers";
+
+CREATE INMEMORY JOIN GROUP orders_order_items_jg
+ ( "orders"("order_id"), "order_items"("order_id") );
 ALTER TABLE "orders" INMEMORY;
+ALTER TABLE "order_items" INMEMORY;
+SELECT COUNT(*) FROM "orders";
+SELECT COUNT(*) FROM "order_items";
+
+ALTER TABLE "reviews" INMEMORY MEMCOMPRESS FOR QUERY("rating", "isbn") ;
+SELECT COUNT(*) FROM "reviews";
+
+ALTER TABLE "orders" INMEMORY MEMCOMPRESS FOR DML ;
+SELECT COUNT(*) FROM  "orders";
+
+ALTER TABLE "addresses" INMEMORY MEMCOMPRESS FOR QUERY ("city");
+SELECT COUNT(*) FROM "addresses";
