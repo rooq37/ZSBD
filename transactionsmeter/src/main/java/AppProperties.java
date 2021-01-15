@@ -93,7 +93,11 @@ public class AppProperties {
         return Integer.parseInt(config.getProperty("sleep-between-iterations"));
     }
 
-    public String getReportFilename() {
-        return config.getProperty("report-filename");
+    public String getMeterReportFilename() {
+        return config.getProperty("meter-report-filename");
+    }
+
+    public String getPlanerReportFilename() {
+        return config.getProperty("planer-report-filename");
     }
 }

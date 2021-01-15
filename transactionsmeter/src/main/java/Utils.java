@@ -5,8 +5,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Utils {
     private static final AppProperties props = new AppProperties();
@@ -186,5 +190,39 @@ public class Utils {
             statement.executeQuery(query);
             statement.close();
         }
+    }
+
+    public static void parsePlansToReport() throws IOException {
+        String[] plans = Files.readString(Paths.get(props.getPlansFilename())).split("\n \\*\\*\\*\\* ");
+        int n = transactionsPaths.size();
+        String[][] report = new String[n][5];
+        for(int i = 1; i < plans.length; i++) {
+            String plan = plans[i];
+            String name = plan.substring(plan.indexOf("transaction"), plan.indexOf(".sql"));
+            int costColNum = Arrays.stream(plan.split("\n")[4].split("\\|")).collect(Collectors.toList()).indexOf(" Cost (%CPU)");
+            String cost = plan.split("\n")[6].split("\\|")[costColNum].trim().split(" ")[0].trim();
+            report[(i - 1) % n][0] = name;
+            if(plan.contains("Indexes: true")) {
+                report[(i - 1) % n][2] = cost;
+            } else if (plan.contains("Partitions: true")) {
+                report[(i - 1) % n][3] = cost;
+            } else if (plan.contains("InMemory: true")) {
+                report[(i - 1) % n][4] = cost;
+            } else {
+                report[(i - 1) % n][1] = cost;
+            }
+        }
+        System.out.println("###############*********** GENERATE FINAL COSTS REPORT **********###################");
+
+        FileWriter fileWriter = new FileWriter(props.getPlanerReportFilename());
+        PrintWriter printWriter = new PrintWriter(fileWriter);
+
+        printWriter.println("Name;Clean;Indexes;Partitions;In memory");
+        for (String[] strings : report) {
+            printWriter.println(String.join(";", strings));
+        }
+        printWriter.close();
+
+        System.out.printf("###############*********** %s GENERATED **********###################%n", props.getPlanerReportFilename());
     }
 }

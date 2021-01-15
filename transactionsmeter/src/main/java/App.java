@@ -49,7 +49,7 @@ public class App {
             Utils.loadPartitions();
             System.out.printf("###############*********** RUN || %s mode **********###################%n", APP_MODE);
             System.out.println("############*********** PARTITONS ADDED!!! **********###############");
-            runAllTransactions(false, false, true);
+            runAllTransactions(false, true, false);
             csvHeaders.add("Partitions [s]");
             Utils.restoreBackup();
             System.out.println("############*********** PARTITIONS REMOVED!!! **********###############");
@@ -61,7 +61,7 @@ public class App {
             System.out.printf("###############*********** RUN || %s mode **********###################%n", APP_MODE);
             System.out.println("############*********** IN MEMORY ADDED!!! **********###############");
             runAllTransactions(false, false, true);
-            csvHeaders.add("In memory");
+            csvHeaders.add("In memory [s]");
             Utils.restoreBackup();
             System.out.println("############*********** IN MEMORY REMOVED!!! **********###############");
         }
@@ -71,7 +71,7 @@ public class App {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setDecimalSeparator(',');
 
-        FileWriter fileWriter = new FileWriter(props.getReportFilename());
+        FileWriter fileWriter = new FileWriter(props.getMeterReportFilename());
         PrintWriter printWriter = new PrintWriter(fileWriter);
 
         printWriter.println(csvHeaders.stream().map(header -> header + ";").collect(Collectors.joining()));
@@ -81,10 +81,11 @@ public class App {
                                 map(v -> new DecimalFormat("#.###", symbols).format(v / 1000) + ";").collect(Collectors.joining())));
         printWriter.close();
 
-        System.out.printf("###############*********** %s GENERATED **********###################%n", props.getReportFilename());
+        System.out.printf("###############*********** %s GENERATED **********###################%n", props.getMeterReportFilename());
 
         if (props.isRestoreBackupOnEnd()) Utils.restoreBackup();
         Utils.closeConnections();
+        if (APP_MODE.equals(Mode.PLANER)) Utils.parsePlansToReport();
     }
 
     public static void runAllTransactions(boolean hasIndex, boolean hasPartitions, boolean hasInMemory) throws IOException, SQLException {
