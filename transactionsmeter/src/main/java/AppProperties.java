@@ -92,4 +92,8 @@ public class AppProperties {
     public int getSleepBetweenIterations() {
         return Integer.parseInt(config.getProperty("sleep-between-iterations"));
     }
+
+    public String getReportFilename() {
+        return config.getProperty("report-filename");
+    }
 }
